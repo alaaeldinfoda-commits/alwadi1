@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="fade-in-up">
+
+  <!-- HEADER + ACTIONS -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h3 class="fw-bold">📄 التقارير</h3>
+
+    <a href="/reports/add" class="btn btn-primary shadow-sm px-4">
+      ➕ إنشاء تقرير جديد
+    </a>
+  </div>
+
+  <!-- SEARCH / FILTERS BAR -->
+  <div class="card shadow-sm border-0 mb-4 p-3">
+    <div class="row g-2">
+
+      <!-- TEXT SEARCH -->
+      <div class="col-md-3">
+        <input type="text" id="searchBox" class="form-control"
+               placeholder="🔍 ابحث في العنوان أو الموقع أو المهندس..."
+               onkeyup="filterReports()">
+      </div>
+
+      <!-- FILTER BY SITE -->
+      <div class="col-md-3">
+        <select id="siteFilter" class="form-select" onchange="filterReports()">
+          <option value="">فلترة حسب الموقع</option>
+          {% for r in reports %}
+          <option>{{ r.site_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- FILTER BY ENGINEER -->
+      <div class="col-md-3">
+        <select id="engineerFilter" class="form-select" onchange="filterReports()">
+          <option value="">فلترة حسب المهندس</option>
+          {% for r in reports %}
+          <option>{{ r.fullname }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- FILTER BY CONTRACTOR (NEW!) -->
+      <div class="col-md-3">
+        <select id="contractorFilter" class="form-select" onchange="filterReports()">
+          <option value="">فلترة حسب المقاول</option>
+          {% for r in reports %}
+          <option>{{ r.contractor_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REPORTS LIST -->
+  <div class="row" id="reportsContainer">
+
+    {% for r in reports %}
+    <div class="col-md-6 col-lg-4 fade-in-up report-card-item">
+      <div class="card report-card shadow-sm border-0 hover-up mb-4">
+        <div class="card-body">
+
+          <h5 class="fw-bold text-primary">{{ r.title }}</h5>
+
+          <p class="small text-muted mb-1">
+            الموقع: <strong>{{ r.site_name }}</strong>
+          </p>
+
+          <p class="small text-muted mb-1">
+            المهندس: <strong>{{ r.fullname }}</strong>
+          </p>
+
+          <p class="small text-muted mb-1">
+            المقاول: <strong>{{ r.contractor_name or '---' }}</strong>
+          </p>
+
+          <p class="small text-muted">
+            التاريخ: {{ r.date_created }}
+          </p>
+
+          <div class="d-flex justify-content-between mt-3">
+            <a href="/reports/view/{{ r.report_id }}"
+               class="btn btn-sm btn-outline-primary shadow-sm">
+              👁 عرض
+            </a>
+
+            <a href="/report/{{ r.report_id }}/pdf"
+               class="btn btn-sm btn-success shadow-sm">
+              📄 PDF
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+
+</div>
+
+
+<style>
+.fade-in-up { animation: fadeInUp .6s ease; }
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.report-card {
+  transition: 0.25s ease;
+  border-right: 4px solid var(--bs-primary);
+}
+.hover-up:hover {
+  transform: translateY(-6px);
+  box-shadow:0 10px 20px rgba(0,0,0,0.15);
+}
+
+#searchBox { background: var(--bs-light); }
+</style>
+
+
+<script>
+function filterReports() {
+  let search = document.getElementById("searchBox").value.toLowerCase();
+  let site   = document.getElementById("siteFilter").value;
+  let eng    = document.getElementById("engineerFilter").value;
+  let cont   = document.getElementById("contractorFilter").value;
+
+  document.querySelectorAll(".report-card-item").forEach(card => {
+
+    let title    = card.querySelector("h5").innerText.toLowerCase();
+    let siteName = card.querySelector("p:nth-of-type(1)").innerText;
+    let engName  = card.querySelector("p:nth-of-type(2)").innerText;
+    let contName = card.querySelector("p:nth-of-type(3)").innerText;
+
+    let matchSearch = title.includes(search)
+                   || siteName.includes(search)
+                   || engName.includes(search)
+                   || contName.includes(search);
+
+    let matchSite   = !site || siteName.includes(site);
+    let matchEng    = !eng  || engName.includes(eng);
+    let matchCont   = !cont || contName.includes(cont);
+
+    if (matchSearch && matchSite && matchEng && matchCont) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+</script>
+
+{% endblock %}

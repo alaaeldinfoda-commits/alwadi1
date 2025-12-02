@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="error-container fade-in-up text-center">
+
+    <h1 class="error-code text-warning fw-bold">401</h1>
+
+    <h3 class="fw-bold mb-2">غير مصرح لك بالوصول</h3>
+    <p class="text-muted mb-4">
+        يجب تسجيل الدخول أولاً للوصول إلى هذه الصفحة.
+    </p>
+
+    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg hover-up">
+        🔐 تسجيل الدخول
+    </a>
+
+</div>
+
+<style>
+.error-container { margin-top: 80px; }
+.error-code { font-size: 90px; animation: float 3s infinite ease-in-out; }
+.fade-in-up { animation: fadeInUp .6s ease; }
+@keyframes float { 
+  0% { transform:translateY(0); } 
+  50% { transform:translateY(-10px); } 
+  100%{ transform:translateY(0); } 
+}
+</style>
+
+{% endblock %}

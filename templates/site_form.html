@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="fade-in-up">
+
+  <!-- HEADER + BACK -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h3 class="fw-bold">
+      {% if site %} ✏ تعديل موقع {% else %} ➕ إضافة موقع جديد {% endif %}
+    </h3>
+
+    <a href="/sites" class="btn btn-outline-secondary shadow-sm hover-up px-4">
+      ⬅ العودة للمواقع
+    </a>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="card shadow-sm border-0 p-4">
+
+    <form method="POST" class="row g-3">
+
+      <!-- Site Code -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">كود الموقع</label>
+        <input type="text"
+               name="site_code"
+               class="form-control form-control-lg input-animate"
+               value="{{ site.site_code if site }}"
+               required>
+      </div>
+
+      <!-- Site Name -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">اسم الموقع</label>
+        <input type="text"
+               name="site_name"
+               class="form-control form-control-lg input-animate"
+               value="{{ site.site_name if site }}"
+               required>
+      </div>
+
+      <!-- Address -->
+      <div class="col-md-12">
+        <label class="form-label fw-bold">العنوان</label>
+        <input type="text"
+               name="address"
+               class="form-control form-control-lg input-animate"
+               value="{{ site.address if site }}">
+      </div>
+
+      <!-- Latitude + Longitude -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Latitude</label>
+        <input type="text"
+               name="latitude"
+               id="lat"
+               class="form-control form-control-lg input-animate"
+               value="{{ site.latitude if site }}">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Longitude</label>
+        <input type="text"
+               name="longitude"
+               id="lon"
+               class="form-control form-control-lg input-animate"
+               value="{{ site.longitude if site }}">
+      </div>
+
+      <!-- Button: Auto location -->
+      <div class="col-md-12">
+        <button type="button"
+                class="btn btn-info px-4 shadow-sm hover-scale"
+                onclick="autoGPS()">
+          📍 تحديد الإحداثيات تلقائيًا
+        </button>
+        <small id="gpsStatus" class="ms-2 text-muted"></small>
+      </div>
+
+      <!-- Contractor -->
+      <div class="col-md-12">
+        <label class="form-label fw-bold">المقاول</label>
+        <select name="contractor_id"
+                class="form-select form-select-lg input-animate">
+          <option value="">-- بدون --</option>
+          {% for c in contractors %}
+          <option value="{{ c.contractor_id }}"
+            {% if site and site.contractor_id == c.contractor_id %} selected {% endif %}>
+            {{ c.contractor_name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- SUBMIT -->
+      <div class="col-12 text-end mt-4">
+        <button class="btn btn-primary btn-lg hover-scale px-5">
+          💾 حفظ
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- ===================== STYLES ===================== -->
+<style>
+.fade-in-up { animation: fadeInUp .6s ease; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.input-animate {
+  transition: 0.25s ease;
+}
+.input-animate:focus {
+  transform: scale(1.03);
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 8px rgba(13,110,253,0.3);
+}
+
+.hover-scale {
+  transition: .25s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-up {
+  transition: .25s ease;
+}
+.hover-up:hover {
+  transform: translateY(-4px);
+}
+</style>
+
+<!-- ===================== SCRIPT ===================== -->
+<script>
+function autoGPS() {
+  const status = document.getElementById("gpsStatus");
+  status.innerText = "جاري تحديد الموقع...";
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        document.getElementById("lat").value = pos.coords.latitude;
+        document.getElementById("lon").value = pos.coords.longitude;
+
+        status.innerText = "✔ تم جلب الإحداثيات بنجاح";
+        status.style.color = "green";
+      },
+      err => {
+        status.innerText = "❌ لم يتم السماح باستخدام GPS";
+        status.style.color = "red";
+      }
+    );
+  } else {
+    status.innerText = "❌ المتصفح لا يدعم GPS";
+    status.style.color = "red";
+  }
+}
+</script>
+
+{% endblock %}

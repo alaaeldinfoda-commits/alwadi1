@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="error-container fade-in-up text-center">
+
+    <h1 class="error-code text-info fw-bold">⛏</h1>
+
+    <h3 class="fw-bold mb-2">النظام تحت الصيانة</h3>
+    <p class="text-muted mb-4">
+        نعمل الآن على تحسين النظام… يرجى العودة بعد قليل.
+    </p>
+
+    <a href="{{ url_for('logout') }}" class="btn btn-secondary hover-up">
+        تسجيل خروج
+    </a>
+
+</div>
+
+<style>
+.error-code {
+    font-size: 80px;
+    animation: shake 2s infinite ease-in-out;
+}
+@keyframes shake {
+    0%,100% { transform: rotate(0); }
+    50% { transform: rotate(6deg); }
+}
+.fade-in-up {
+    animation: fadeInUp .6s ease;
+}
+.hover-up:hover { transform: translateY(-5px); }
+.error-container { margin-top: 80px; }
+</style>
+
+{% endblock %}

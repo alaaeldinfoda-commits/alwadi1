@@ -1,0 +1,37 @@
+flask
+mysql-connector-python
+python-dotenv
+werkzeug
+reportlab
+flask-socketio
+python-socketio
+eventlet
+flask-login
+flask-wtf
+wtforms
+flask-mysqldb
+gevent
+Flask==3.0.2
+Flask-Login==0.6.3
+mysql-connector-python==9.1.0
+
+# Arabic PDF
+reportlab==4.1.0
+arabic-reshaper==3.0.0
+python-bidi==0.4.2
+
+# Images & QR
+Pillow==10.3.0
+
+# Security / Auth / 2FA
+Werkzeug==3.0.2
+itsdangerous==2.2.0
+PyJWT==2.8.0
+cryptography==42.0.5
+
+# Utils
+requests==2.32.3
+
+# Optional but recommended
+python-dotenv==1.0.1
+

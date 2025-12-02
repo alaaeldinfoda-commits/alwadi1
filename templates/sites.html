@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="fade-in-up">
+
+  <!-- HEADER + ACTIONS -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h3 class="fw-bold">📍 المواقع</h3>
+
+    <a href="/sites/add" class="btn btn-primary shadow px-4 hover-scale">
+      ➕ إضافة موقع جديد
+    </a>
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="card shadow-sm border-0 mb-4 p-3">
+    <div class="row g-2">
+      <div class="col-md-4">
+        <input type="text" id="searchBox" class="form-control"
+               placeholder="🔎 ابحث في الاسم أو الكود…"
+               onkeyup="filterSites()">
+      </div>
+    </div>
+  </div>
+
+  <!-- SITES TABLE -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <table class="table table-hover align-middle" id="sitesTable">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>الاسم</th>
+            <th>الكود</th>
+            <th class="text-end">الإجراءات</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        {% for s in sites %}
+          <tr class="site-row">
+            <td>{{ s.site_id }}</td>
+            <td class="fw-bold">{{ s.site_name }}</td>
+            <td><span class="badge bg-info">{{ s.site_code }}</span></td>
+
+            <td class="text-end">
+              <a href="/sites/edit/{{ s.site_id }}"
+                 class="btn btn-sm btn-outline-secondary hover-up">
+                ✏ تعديل
+              </a>
+
+              <a href="/sites/delete/{{ s.site_id }}"
+                 class="btn btn-sm btn-outline-danger hover-up"
+                 onclick="return confirm('هل تريد حذف هذا الموقع؟')">
+                🗑 حذف
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- STYLES -->
+<style>
+/* Fade Animation */
+.fade-in-up { animation: fadeInUp .5s ease; }
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(15px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* Hover Scale */
+.hover-scale {
+  transition: 0.25s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Hover Up Buttons */
+.hover-up {
+  transition: 0.3s ease;
+}
+.hover-up:hover {
+  transform: translateY(-3px);
+}
+
+/* Table + Theme */
+.table-hover tbody tr:hover {
+  background: rgba(0, 123, 255, 0.05);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  table { font-size: 14px; }
+}
+</style>
+
+
+<!-- JS FILTER LOGIC -->
+<script>
+function filterSites() {
+  let search = document.getElementById("searchBox").value.toLowerCase();
+
+  document.querySelectorAll(".site-row").forEach(row => {
+    let name = row.children[1].innerText.toLowerCase();
+    let code = row.children[2].innerText.toLowerCase();
+
+    if (name.includes(search) || code.includes(search)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+}
+</script>
+
+{% endblock %}

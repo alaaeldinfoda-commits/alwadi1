@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="fade-in-up">
+
+  <h3 class="fw-bold mb-4">🛡️ إدارة صلاحيات المستخدمين</h3>
+
+  <!-- FORM -->
+  <div class="card shadow-sm border-0 p-4 mb-4">
+
+    <form method="POST" class="row g-3">
+
+      <div class="col-md-4">
+        <label class="fw-bold">المستخدم</label>
+        <select name="target_user" class="form-select stylish-input">
+          {% for u in users %}
+          <option value="{{ u.user_id }}">{{ u.fullname or u.username }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="fw-bold">الموقع</label>
+        <select name="site_id" class="form-select stylish-input">
+          {% for s in sites %}
+          <option value="{{ s.site_id }}">{{ s.site_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- PERMISSIONS -->
+      <div class="col-md-12 mt-3">
+
+        <div class="permission-box p-3 rounded shadow-sm">
+
+          <h5 class="fw-bold mb-3">صلاحيات الوصول</h5>
+
+          <div class="d-flex flex-wrap gap-3">
+
+            <div class="form-check form-switch">
+              <input class="form-check-input perm-toggle" type="checkbox" id="allow_site" name="allow_site">
+              <label class="form-check-label" for="allow_site">السماح بالوصول للموقع</label>
+            </div>
+
+            <div class="form-check form-switch">
+              <input class="form-check-input perm-toggle child-perm" type="checkbox" id="can_view" name="can_view" disabled>
+              <label class="form-check-label" for="can_view">عرض</label>
+            </div>
+
+            <div class="form-check form-switch">
+              <input class="form-check-input perm-toggle child-perm" type="checkbox" id="can_add" name="can_add" disabled>
+              <label class="form-check-label" for="can_add">إضافة</label>
+            </div>
+
+            <div class="form-check form-switch">
+              <input class="form-check-input perm-toggle child-perm" type="checkbox" id="can_edit" name="can_edit" disabled>
+              <label class="form-check-label" for="can_edit">تعديل</label>
+            </div>
+
+            <div class="form-check form-switch">
+              <input class="form-check-input perm-toggle child-perm" type="checkbox" id="can_delete" name="can_delete" disabled>
+              <label class="form-check-label" for="can_delete">حذف</label>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-md-12 d-grid mt-4">
+        <button class="btn btn-primary stylish-btn">💾 حفظ الصلاحيات</button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- CURRENT PERMISSIONS -->
+  <div class="card shadow-sm border-0 p-4 fade-in-up">
+
+    <h4 class="fw-bold mb-3">📋 الصلاحيات الحالية</h4>
+
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>المستخدم</th>
+          <th>الموقع</th>
+          <th>عرض</th>
+          <th>إضافة</th>
+          <th>تعديل</th>
+          <th>حذف</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in perms %}
+        <tr class="hover-row">
+          <td>{{ p.user_name }}</td>
+          <td>{{ p.site_name }}</td>
+
+          <td><span class="badge {{ 'bg-success' if p.can_view else 'bg-secondary' }}">{{ 'نعم' if p.can_view else 'لا' }}</span></td>
+          <td><span class="badge {{ 'bg-success' if p.can_add else 'bg-secondary' }}">{{ 'نعم' if p.can_add else 'لا' }}</span></td>
+          <td><span class="badge {{ 'bg-warning text-dark' if p.can_edit else 'bg-secondary' }}">{{ 'نعم' if p.can_edit else 'لا' }}</span></td>
+          <td><span class="badge {{ 'bg-danger' if p.can_delete else 'bg-secondary' }}">{{ 'نعم' if p.can_delete else 'لا' }}</span></td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
+
+
+
+<!-- Page Styling -->
+<style>
+.permission-box {
+  background: var(--bs-light-bg-subtle);
+  border-left: 4px solid var(--bs-primary);
+}
+
+.hover-row:hover {
+  background: rgba(13,110,253,.07);
+  transition: 0.3s;
+}
+
+/* Fade & hover animation */
+.fade-in-up {
+  animation: fadeInUp .6s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+.stylish-btn {
+  height: 48px;
+  border-radius: 10px;
+  font-size: 17px;
+  transition: 0.3s;
+}
+
+.stylish-btn:hover {
+  transform: scale(1.03);
+}
+
+.stylish-input {
+  border-radius: 8px;
+  padding: 10px;
+}
+
+</style>
+
+
+<!-- Smart Permission Logic -->
+<script>
+document.getElementById("allow_site").addEventListener("change", function() {
+  const children = document.querySelectorAll(".child-perm");
+  children.forEach(ch => ch.disabled = !this.checked);
+});
+</script>
+
+{% endblock %}

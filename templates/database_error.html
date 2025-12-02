@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="error-container fade-in-up text-center">
+
+    <h1 class="error-code text-danger fw-bold">💾</h1>
+
+    <h3 class="fw-bold mb-2">خطأ في قاعدة البيانات</h3>
+    <p class="text-muted mb-4">
+        لم نتمكن من الاتصال بقاعدة البيانات.  
+        تحقق من الإعدادات أو اتصل بالمطور.
+    </p>
+
+    <a href="{{ url_for('dashboard') }}" class="btn btn-primary hover-up">
+        إعادة المحاولة
+    </a>
+
+</div>
+
+<style>
+.error-code { 
+    font-size: 80px; 
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); opacity:.9; }
+    50% { transform: scale(1.1); opacity:1; }
+    100% { transform: scale(1); opacity:.9; }
+}
+.fade-in-up { animation: fadeInUp .6s ease; }
+.error-container { margin-top: 80px; }
+</style>
+
+{% endblock %}

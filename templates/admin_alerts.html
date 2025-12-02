@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>إدارة الإشعارات والتنبيهات</h3>
+<form method="POST" class="mb-4">
+  <div class="mb-3"><label class="form-label">العنوان</label><input name="title" class="form-control" required></div>
+  <div class="mb-3"><label>النص</label><textarea name="body" class="form-control"></textarea></div>
+  <div class="mb-3"><label>المستوى</label>
+    <select name="level" class="form-select">
+      <option value="info">معلومة</option>
+      <option value="success">نجاح</option>
+      <option value="warning">تحذير</option>
+      <option value="danger">خطر</option>
+    </select>
+  </div>
+  <button class="btn btn-primary">نشر</button>
+</form>
+
+<hr>
+<h5>تنبيه صيانة</h5>
+<form method="POST" action="{{ url_for('admin_maintenance_toggle') }}">
+  <div class="form-check form-switch mb-2">
+    <input class="form-check-input" type="checkbox" id="maintenanceSwitch" name="mode" value="1" {% if get_config('maintenance_mode','0') == '1' %}checked{% endif %}>
+    <label class="form-check-label" for="maintenanceSwitch">تفعيل وضع الصيانة</label>
+  </div>
+  <button class="btn btn-warning">تحديث</button>
+</form>
+
+<hr>
+<h5>السجلات</h5>
+<a class="btn btn-outline-secondary" href="{{ url_for('admin_audit_export') }}">تصدير Audit CSV</a>
+
+<hr>
+<h5>التنبيهات الحالية</h5>
+<table class="table">
+  <thead><tr><th>#</th><th>العنوان</th><th>مستوى</th><th>نشط؟</th></tr></thead>
+  <tbody>
+    {% for a in alerts %}
+    <tr><td>{{ a.alert_id }}</td><td>{{ a.title }}</td><td>{{ a.level }}</td><td>{{ 'نعم' if a.is_active else 'لا' }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

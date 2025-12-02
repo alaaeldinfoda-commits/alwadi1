@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="fade-in-up">
+
+  <!-- HEADER + ACTIONS -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h3 class="fw-bold">👥 إدارة المستخدمين</h3>
+
+    <a href="/users/add" class="btn btn-primary shadow px-4 hover-scale">
+      ➕ إضافة مستخدم جديد
+    </a>
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="card shadow-sm border-0 mb-4 p-3">
+    <div class="row g-2">
+
+      <div class="col-md-5">
+        <input type="text" id="searchBox" class="form-control"
+               placeholder="🔍 ابحث باسم المستخدم، الاكونت، أو الدور..."
+               onkeyup="filterUsers()">
+      </div>
+
+      <div class="col-md-3">
+        <select id="roleFilter" class="form-select" onchange="filterUsers()">
+          <option value="">فلترة بالدور</option>
+          {% for u in users %}
+            {% if u.role_name %}
+            <option>{{ u.role_name }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- USERS TABLE -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+
+      <table class="table table-hover align-middle" id="usersTable">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>الاسم</th>
+            <th>اسم الدخول</th>
+            <th>الدور</th>
+            <th class="text-end">الإجراءات</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        {% for u in users %}
+          <tr class="user-row">
+
+            <td>{{ u.id }}</td>
+
+            <td class="fw-bold">
+              👤 {{ u.fullname or '—' }}
+            </td>
+
+            <td>{{ u.username }}</td>
+
+            <td>
+              <span class="badge bg-info text-dark">
+                {{ u.role_name }}
+              </span>
+            </td>
+
+            <td class="text-end">
+
+              <a href="/users/edit/{{ u.id }}"
+                 class="btn btn-sm btn-outline-secondary hover-up">
+                ✏ تعديل
+              </a>
+
+              <a href="/users/delete/{{ u.id }}"
+                 class="btn btn-sm btn-outline-danger hover-up"
+                 onclick="return confirm('هل تريد حذف هذا المستخدم؟')">
+                🗑 حذف
+              </a>
+
+            </td>
+
+          </tr>
+        {% endfor %}
+        </tbody>
+
+      </table>
+
+    </div>
+  </div>
+
+</div>
+
+
+<!-- STYLES -->
+<style>
+
+/* Fade Animation */
+.fade-in-up { animation: fadeInUp .5s ease; }
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(15px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* Hover effects */
+.hover-scale { transition: 0.25s ease; }
+.hover-scale:hover { transform: scale(1.05); }
+
+.hover-up { transition: 0.3s ease; }
+.hover-up:hover { transform: translateY(-3px); }
+
+/* Table hover highlight */
+.table-hover tbody tr:hover {
+  background: rgba(13,110,253,0.06);
+}
+
+/* Responsive table size */
+@media (max-width: 768px) {
+  table { font-size: 14px; }
+}
+</style>
+
+
+<!-- SEARCH + FILTER SCRIPT -->
+<script>
+function filterUsers() {
+  let search = document.getElementById("searchBox").value.toLowerCase();
+  let role   = document.getElementById("roleFilter").value;
+
+  document.querySelectorAll(".user-row").forEach(row => {
+
+    let name   = row.children[1].innerText.toLowerCase();
+    let uname  = row.children[2].innerText.toLowerCase();
+    let roleNm = row.children[3].innerText;
+
+    let matchSearch =
+      name.includes(search) ||
+      uname.includes(search) ||
+      roleNm.includes(search);
+
+    let matchRole = !role || roleNm.includes(role);
+
+    row.style.display = (matchSearch && matchRole) ? "" : "none";
+  });
+}
+</script>
+
+{% endblock %}

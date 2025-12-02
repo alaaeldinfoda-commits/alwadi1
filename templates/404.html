@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="error-container fade-in-up text-center">
+
+    <!-- ERROR CODE -->
+    <h1 class="error-code fw-bold text-danger">404</h1>
+
+    <!-- MESSAGE -->
+    <h3 class="fw-bold mb-2">عذراً! الصفحة غير موجودة</h3>
+    <p class="text-muted mb-4">
+        قد تكون الصفحة محذوفة أو الرابط غير صحيح.
+    </p>
+
+    <!-- BUTTON -->
+    <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg px-4 hover-up">
+        ⬅ العودة للوحة التحكم
+    </a>
+</div>
+
+
+<!-- ========== Styles ========== -->
+<style>
+/****************************
+   ANIMATIONS
+*****************************/
+.fade-in-up {
+    animation: fadeInUp .6s ease;
+}
+@keyframes fadeInUp {
+    from { opacity:0; transform: translateY(20px); }
+    to   { opacity:1; transform: translateY(0); }
+}
+
+.error-code {
+    font-size: 100px;
+    animation: float 3s infinite ease-in-out;
+}
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
+.hover-up {
+    transition: .25s ease;
+}
+.hover-up:hover {
+    transform: translateY(-4px);
+}
+
+/****************************
+   DARK MODE SUPPORT
+*****************************/
+body.dark-mode .error-code {
+    color: #ff6b6b;
+}
+body.dark-mode .text-muted {
+    color: #aaa !important;
+}
+
+.error-container {
+    margin-top: 80px;
+}
+</style>
+
+{% endblock %}

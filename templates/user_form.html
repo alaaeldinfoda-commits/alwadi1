@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="fade-in-up">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h3 class="fw-bold">
+      {% if user %} ✏ تعديل مستخدم {% else %} ➕ إضافة مستخدم {% endif %}
+    </h3>
+
+    <a href="/users" class="btn btn-outline-secondary shadow-sm hover-up px-4">
+      ⬅ العودة للمستخدمين
+    </a>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="card shadow-sm border-0 p-4">
+
+    <form method="POST" class="row g-3">
+
+      <!-- Username -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">اسم المستخدم</label>
+        <input type="text"
+               class="form-control form-control-lg input-animate"
+               name="username"
+               value="{{ user.username if user }}"
+               required>
+      </div>
+
+      <!-- Full Name -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">الاسم الكامل</label>
+        <input type="text"
+               class="form-control form-control-lg input-animate"
+               name="fullname"
+               value="{{ user.fullname if user }}">
+      </div>
+
+      <!-- Password -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">كلمة المرور</label>
+
+        <div class="input-group">
+          <input type="password"
+                 id="passwordField"
+                 class="form-control form-control-lg input-animate"
+                 name="password"
+                 placeholder="•••••••"
+                 {% if not user %} required {% endif %}>
+
+          <button type="button"
+                  class="btn btn-outline-secondary"
+                  onclick="togglePassword()">
+            👁
+          </button>
+        </div>
+
+        <!-- Password Strength -->
+        <div class="mt-2">
+          <small id="passStrength" class="fw-bold"></small>
+        </div>
+      </div>
+
+      <!-- ROLE -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">الدور</label>
+        <select name="role_id"
+                class="form-select form-select-lg input-animate">
+          {% for r in roles %}
+            <option value="{{ r.role_id }}"
+              {% if user and user.role_id == r.role_id %} selected {% endif %}>
+              {{ r.role_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- SUBMIT -->
+      <div class="col-12 text-end mt-3">
+        <button class="btn btn-primary btn-lg hover-scale px-5">
+          💾 حفظ
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<!-- =====================  STYLES  ===================== -->
+<style>
+.fade-in-up { animation: fadeInUp .6s ease; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.input-animate {
+  transition: 0.25s ease;
+}
+.input-animate:focus {
+  transform: scale(1.03);
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 8px rgba(13,110,253,0.3);
+}
+
+.hover-scale { transition: .25s ease; }
+.hover-scale:hover { transform: scale(1.05); }
+
+.hover-up { transition: .25s ease; }
+.hover-up:hover { transform: translateY(-4px); }
+
+/* Password colors */
+.strength-weak { color: red; }
+.strength-mid  { color: orange; }
+.strength-strong { color: green; }
+</style>
+
+
+<!-- =====================  SCRIPT  ===================== -->
+<script>
+/* Show / Hide Password */
+function togglePassword() {
+  const field = document.getElementById('passwordField');
+  field.type = field.type === "password" ? "text" : "password";
+}
+
+/* Password Strength Indicator */
+document.getElementById("passwordField").addEventListener("input", function () {
+  let pass = this.value;
+  let strength = document.getElementById("passStrength");
+
+  if (pass.length < 4) {
+    strength.innerText = "ضعيفة جدًا";
+    strength.className = "strength-weak";
+  } 
+  else if (pass.length < 7) {
+    strength.innerText = "متوسطة";
+    strength.className = "strength-mid";
+  } 
+  else {
+    strength.innerText = "قوية";
+    strength.className = "strength-strong";
+  }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="fade-in-up">
+
+  <!-- عنوان -->
+  <h3 class="fw-bold mb-4">🔎 بحث وفلترة التقارير</h3>
+
+  <!-- FORM -->
+  <div class="card shadow-sm border-0 p-4 mb-4">
+    <form method="POST" class="row g-3">
+
+      <div class="col-md-3">
+        <label class="fw-bold">الموقع</label>
+        <select name="site_id" class="form-select stylish-input">
+          <option value="">الكل</option>
+          {% for s in sites %}
+          <option value="{{ s.site_id }}">{{ s.site_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="fw-bold">المقاول</label>
+        <select name="contractor_id" class="form-select stylish-input">
+          <option value="">الكل</option>
+          {% for c in contractors %}
+          <option value="{{ c.contractor_id }}">{{ c.contractor_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="fw-bold">المهندس</label>
+        <select name="engineer_id" class="form-select stylish-input">
+          <option value="">الكل</option>
+          {% for e in engineers %}
+          <option value="{{ e.user_id }}">{{ e.fullname }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="fw-bold">من تاريخ</label>
+        <input type="date" name="date_from" class="form-control stylish-input">
+      </div>
+
+      <div class="col-md-3">
+        <label class="fw-bold">إلى تاريخ</label>
+        <input type="date" name="date_to" class="form-control stylish-input">
+      </div>
+
+      <div class="col-md-3 d-grid">
+        <button class="btn btn-primary stylish-btn mt-4">بحث</button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- النتائج -->
+  <h4 class="mb-3">📄 النتائج</h4>
+
+  {% if reports %}
+  <div class="row" id="resultsContainer">
+
+    {% for r in reports %}
+    <div class="col-md-6 col-lg-4 fade-in-up">
+      <div class="report-card shadow-sm border-0 hover-up mb-4">
+
+        <div class="p-3">
+          <h5 class="fw-bold text-primary">{{ r.title }}</h5>
+
+          <p class="small text-muted mb-1">
+            الموقع: <strong>{{ r.site_name }}</strong>
+          </p>
+
+          <p class="small text-muted mb-1">
+            المقاول: <strong>{{ r.contractor_name or '—' }}</strong>
+          </p>
+
+          <p class="small text-muted mb-1">
+            المهندس: <strong>{{ r.engineer_name }}</strong>
+          </p>
+
+          <p class="small text-muted">
+            {{ r.date_created }}
+          </p>
+
+          <div class="mt-2 d-flex justify-content-between">
+            <a href="/reports/view/{{ r.report_id }}" class="btn btn-sm btn-outline-info shadow-sm">
+              👁 عرض
+            </a>
+            <a href="/report/{{ r.report_id }}/pdf" class="btn btn-sm btn-success shadow-sm">
+              📄 PDF
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+
+  {% else %}
+  <div class="alert alert-warning text-center">لا توجد نتائج مطابقة للبحث.</div>
+  {% endif %}
+
+</div>
+
+
+<style>
+/******** Animations *********/
+.fade-in-up { animation: fadeInUp .6s ease; }
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/******** Cards *********/
+.report-card {
+  background: var(--bs-body-bg);
+  border-right: 4px solid var(--bs-primary);
+  border-radius: 10px;
+  transition: 0.25s ease-in-out;
+}
+.hover-up:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.15);
+}
+
+/******** Form Enhancements *********/
+.stylish-input {
+  border-radius: 8px;
+  padding: 10px;
+  transition: 0.2s ease;
+}
+.stylish-input:focus {
+  box-shadow: 0 0 0 3px rgba(13,110,253,.25);
+}
+
+.stylish-btn {
+  height: 48px;
+  border-radius: 10px;
+  font-size: 17px;
+  transition: 0.25s;
+}
+.stylish-btn:hover {
+  background: #0b5ed7;
+  transform: scale(1.03);
+}
+
+</style>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>إرسال إشعار</h3>
+<form method="POST" action="/admin/notifications/create">
+  <div class="mb-3">
+    <label>العنوان</label>
+    <input class="form-control" name="title" required>
+  </div>
+  <div class="mb-3">
+    <label>النص</label>
+    <textarea class="form-control" name="body"></textarea>
+  </div>
+  <div class="mb-3">
+    <label>الهدف</label>
+    <select name="target" class="form-select">
+      <option value="all">كل المستخدمين</option>
+      <option value="">مستخدمون محددون (ضع IDs مفصولة بفاصلة)</option>
+    </select>
+    <input class="form-control mt-2" name="target_ids" placeholder="مثال: 2,5,7">
+  </div>
+  <button class="btn btn-primary">إرسال</button>
+</form>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="fade-in-up">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h3 class="fw-bold">🛡 إدارة الأدوار</h3>
+
+    <a href="{{ url_for('add_role') }}" class="btn btn-primary shadow-sm hover-scale px-4">
+      ➕ إضافة دور جديد
+    </a>
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="card shadow-sm border-0 mb-4 p-3">
+    <div class="row g-2">
+
+      <div class="col-md-6">
+        <input type="text" id="searchBox" class="form-control"
+               placeholder="🔍 ابحث باسم الدور..."
+               onkeyup="filterRoles()">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ROLES TABLE -->
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th style="width:90px">ID</th>
+            <th>اسم الدور</th>
+            <th class="text-end" style="width:150px">الإجراءات</th>
+          </tr>
+        </thead>
+
+        <tbody id="rolesTable">
+        {% for r in roles %}
+          <tr class="role-row">
+
+            <td class="fw-bold">{{ r.role_id }}</td>
+
+            <td>
+              <span class="badge bg-info text-dark px-3 py-2" style="font-size:14px;">
+                {{ r.role_name }}
+              </span>
+            </td>
+
+            <td class="text-end">
+
+              <!-- تعديل الدور -->
+              <a href="/roles/edit/{{ r.role_id }}"
+                 class="btn btn-sm btn-outline-secondary hover-up">
+                ✏ تعديل
+              </a>
+
+              <!-- حذف الدور -->
+              <a href="/roles/delete/{{ r.role_id }}"
+                 class="btn btn-sm btn-outline-danger hover-up"
+                 onclick="return confirm('هل تريد حذف هذا الدور؟')">
+                🗑 حذف
+              </a>
+
+            </td>
+
+          </tr>
+        {% endfor %}
+        </tbody>
+
+      </table>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- STYLES -->
+<style>
+/*********** Fade Animation ***********/
+.fade-in-up { animation: fadeInUp .5s ease; }
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(15px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/*********** Hover effects ***********/
+.hover-scale { transition: 0.25s ease; }
+.hover-scale:hover { transform: scale(1.05); }
+
+.hover-up { transition: 0.3s ease; }
+.hover-up:hover { transform: translateY(-4px); }
+
+/*********** Table hover ***********/
+.table-hover tbody tr:hover {
+  background: rgba(13,110,253,0.08);
+}
+
+/*********** Badges ***********/
+.badge {
+  font-size: 14px !important;
+  padding: 8px 12px !important;
+}
+
+/*********** Responsive ***********/
+@media (max-width: 768px) {
+  .btn-sm { font-size: 13px; }
+  table { font-size: 14px; }
+}
+</style>
+
+<!-- SEARCH SCRIPT -->
+<script>
+function filterRoles() {
+  let search = document.getElementById("searchBox").value.toLowerCase();
+
+  document.querySelectorAll(".role-row").forEach(row => {
+    let roleName = row.children[1].innerText.toLowerCase();
+    row.style.display = roleName.includes(search) ? "" : "none";
+  });
+}
+</script>
+
+{% endblock %}

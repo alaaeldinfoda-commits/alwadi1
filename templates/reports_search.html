@@ -1,0 +1,18 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4">
+  <h4>بحث وفلترة التقارير</h4>
+  <form method="POST" class="row g-3 align-items-end">
+    <div class="col-md-3"><label>الموقع</label><select name="site_id" class="form-select"><option value="">الكل</option>{% for s in sites %}<option value="{{ s.site_id }}">{{ s.site_name }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label>المقاول</label><select name="contractor_id" class="form-select"><option value="">الكل</option>{% for c in contractors %}<option value="{{ c.contractor_id }}">{{ c.contractor_name }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label>المهندس</label><select name="engineer_id" class="form-select"><option value="">الكل</option>{% for e in engineers %}<option value="{{ e.user_id }}">{{ e.fullname }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><label>من تاريخ</label><input type="date" name="date_from" class="form-control"></div>
+    <div class="col-md-3"><label>إلى تاريخ</label><input type="date" name="date_to" class="form-control"></div>
+    <div class="col-md-3"><button class="btn btn-primary w-100">بحث</button></div>
+  </form>
+  <hr>
+  <h5>نتائج</h5>
+  <table class="table"><thead><tr><th>#</th><th>العنوان</th><th>الموقع</th><th>المقاول</th><th>المهندس</th><th>التاريخ</th><th></th></tr></thead><tbody>{% for r in reports %}<tr><td>{{ r.report_id }}</td><td>{{ r.title }}</td><td>{{ r.site_name }}</td><td>{{ r.contractor_name }}</td><td>{{ r.engineer_name }}</td><td>{{ r.date_created }}</td><td><a class="btn btn-sm btn-outline-info" href="/reports/view/{{ r.report_id }}">عرض</a></td></tr>{% endfor %}</tbody></table>
+</div>
+{% endblock %}

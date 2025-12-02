@@ -1,0 +1,1 @@
+Place an Arabic TTF file here named 'Amiri-Regular.ttf' or change create_report_pdf to use another font.

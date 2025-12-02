@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header mb-4">
+  <h3 class="fw-bold fade-in-up">إنشاء تقرير جديد</h3>
+  <p class="text-muted">قم بتسجيل تفاصيل الموقع، العمالة، الصور، والموقع الجغرافي (GPS)</p>
+</div>
+
+<form method="POST" enctype="multipart/form-data" id="reportForm">
+
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" class="loading-overlay d-none">
+    <div class="spinner-border text-primary"></div>
+    <p class="mt-2">جاري حفظ التقرير...</p>
+  </div>
+
+  <div class="row g-3 fade-in-up">
+
+    <!-- الموقع و المقاول -->
+    <div class="col-md-6">
+      <label class="form-label fw-bold">الموقع</label>
+      <select name="site_id" class="form-select shadow-sm" required>
+        {% for s in sites %}
+        <option value="{{ s.site_id }}">{{ s.site_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label fw-bold">المقاول</label>
+      <select name="contractor_id" class="form-select shadow-sm">
+        <option value="">-- لا يوجد --</option>
+        {% for c in contractors %}
+        <option value="{{ c.contractor_id }}">{{ c.contractor_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- GPS Auto -->
+    <input type="hidden" id="gps_lat" name="gps_lat">
+    <input type="hidden" id="gps_lon" name="gps_lon">
+
+    <div class="col-12">
+      <div class="alert alert-info py-2 small d-flex align-items-center" id="gpsStatus">
+        <span class="spinner-border spinner-border-sm me-2"></span>
+        جاري تحديد الموقع الجغرافي...
+      </div>
+    </div>
+
+    <!-- العنوان -->
+    <div class="col-12">
+      <label class="form-label fw-bold">عنوان التقرير</label>
+      <input type="text" class="form-control shadow-sm" name="title" required>
+    </div>
+
+    <!-- الوصف -->
+    <div class="col-12">
+      <label class="form-label fw-bold">الوصف</label>
+      <textarea class="form-control shadow-sm" name="description" rows="4" required></textarea>
+    </div>
+
+  </div>
+
+  <!-- العمالة -->
+  <div class="card shadow-sm mt-4 fade-in-up">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <strong>العمالة</strong>
+      <button type="button" class="btn btn-light btn-sm px-3" onclick="addWorker()">➕ إضافة عامل</button>
+    </div>
+
+    <div class="card-body p-2">
+      <table class="table align-middle" id="workers_table">
+        <thead class="table-light">
+          <tr>
+            <th>الاسم</th>
+            <th>الوظيفة</th>
+            <th>المهمة</th>
+            <th>ملاحظات</th>
+            <th width="60"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- رفع الصور -->
+  <div class="card shadow-sm mt-4 fade-in-up">
+    <div class="card-header bg-secondary text-white">
+      <strong>الصور</strong>
+    </div>
+
+    <div class="card-body">
+      <label class="form-label fw-bold">إرفاق صور</label>
+      <input type="file" name="photos" multiple class="form-control shadow-sm">
+
+      <small class="text-muted">يمكن رفع عدة صور دفعة واحدة</small>
+    </div>
+  </div>
+
+  <!-- زر الحفظ -->
+  <div class="d-flex justify-content-end mt-4 fade-in-up">
+    <button class="btn btn-primary px-4 py-2 shadow" type="submit">
+      💾 حفظ التقرير
+    </button>
+  </div>
+
+</form>
+
+
+<script>
+/* ----------------------------- إضافة عامل ----------------------------- */
+function addWorker() {
+  const tbody = document.querySelector("#workers_table tbody");
+  const row = document.createElement("tr");
+
+  row.classList.add("fade-in-up");
+
+  row.innerHTML = `
+    <td><input name="worker_name[]" class="form-control" required></td>
+    <td><input name="job_title[]" class="form-control"></td>
+    <td><input name="task_details[]" class="form-control"></td>
+    <td><input name="notes[]" class="form-control"></td>
+    <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">✖</button></td>
+  `;
+  tbody.appendChild(row);
+}
+
+/* ----------------------------- GPS Auto ----------------------------- */
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      document.getElementById('gps_lat').value = pos.coords.latitude;
+      document.getElementById('gps_lon').value = pos.coords.longitude;
+      document.getElementById('gpsStatus').className = "alert alert-success py-2 small";
+      document.getElementById('gpsStatus').innerHTML = "✔ تم تسجيل الموقع الجغرافي بنجاح";
+    },
+    err => {
+      document.getElementById('gpsStatus').className = "alert alert-warning py-2 small";
+      document.getElementById('gpsStatus').innerHTML = "⚠ لم يتم السماح بالوصول إلى GPS";
+    }
+  );
+}
+
+/* ----------------------------- Loading Screen ----------------------------- */
+document.getElementById("reportForm").addEventListener("submit", () => {
+  document.getElementById("loading-overlay").classList.remove("d-none");
+});
+</script>
+
+<style>
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-size: 1.1rem;
+}
+
+/* Appear Animation */
+.fade-in-up {
+  animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+{% endblock %}

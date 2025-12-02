@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="error-container text-center fade-in-up">
+
+    <h1 class="error-code text-primary fw-bold">🚧</h1>
+
+    <h3 class="fw-bold mb-3">الميزة قيد التطوير</h3>
+    <p class="text-muted">نعمل على تطوير هذه الصفحة وسيتم إطلاقها قريبًا.</p>
+
+    <a href="{{ url_for('dashboard') }}" class="btn btn-dark mt-3 hover-up">العودة للوحة التحكم</a>
+
+</div>
+
+<style>
+.error-container { margin-top: 80px; }
+.error-code { font-size: 90px; animation: bounce 2s infinite; }
+@keyframes bounce {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-10px); }
+}
+.fade-in-up { animation: fadeInUp .6s ease; }
+</style>
+
+{% endblock %}

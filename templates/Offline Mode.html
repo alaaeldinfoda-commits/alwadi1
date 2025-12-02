@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="error-container fade-in-up text-center">
+
+    <h1 class="error-code text-secondary fw-bold">📡</h1>
+
+    <h3 class="fw-bold">لا يوجد اتصال بالإنترنت</h3>
+    <p class="text-muted">يرجى التحقق من الشبكة وإعادة المحاولة.</p>
+
+    <button class="btn btn-primary mt-3 hover-up" onclick="location.reload()">
+        🔄 إعادة المحاولة
+    </button>
+
+</div>
+
+<style>
+.error-container { margin-top: 80px; }
+.error-code { font-size: 90px; animation: float 3s infinite; }
+.fade-in-up { animation: fadeInUp .6s ease; }
+</style>
+
+<script>
+window.addEventListener("offline", () => {
+    window.location.href = "/offline";
+});
+</script>
+
+{% endblock %}

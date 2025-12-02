@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="fade-in-up">
+
+  <!-- PAGE HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h3 class="fw-bold">
+      {% if role %} ✏ تعديل الدور {% else %} ➕ إضافة دور جديد {% endif %}
+    </h3>
+
+    <a href="{{ url_for('roles') }}" class="btn btn-outline-secondary shadow-sm hover-up">
+      ⬅ العودة للأدوار
+    </a>
+  </div>
+
+  <!-- ROLE FORM -->
+  <div class="card shadow-sm border-0 p-4 mb-4">
+
+    <form method="POST" class="row g-3">
+
+      <div class="col-md-6">
+        <label class="form-label fw-bold">اسم الدور</label>
+
+        <input type="text"
+               name="role_name"
+               id="roleName"
+               value="{{ role.role_name if role }}"
+               placeholder="مثال: Admin / Manager / Engineer"
+               class="form-control form-control-lg input-animate"
+               required>
+      </div>
+
+      <div class="col-12 text-end mt-3">
+        <button class="btn btn-primary btn-lg px-4 hover-scale">
+          💾 حفظ
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+
+  <!-- ROLES TABLE (from DB) -->
+  <div class="card shadow-sm border-0 p-4">
+
+    <h5 class="fw-bold mb-3">📋 قائمة الأدوار الحالية</h5>
+
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th style="width:90px">ID</th>
+          <th>اسم الدور</th>
+          <th class="text-end" style="width:180px">الإجراءات</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {% for r in roles %}
+        <tr>
+
+          <td class="fw-bold">{{ r.role_id }}</td>
+
+          <td>
+            <span class="badge bg-info text-dark px-3 py-2" style="font-size:14px;">
+              {{ r.role_name }}
+            </span>
+          </td>
+
+          <td class="text-end">
+            <a href="/roles/edit/{{ r.role_id }}" class="btn btn-sm btn-outline-secondary hover-up">
+              ✏ تعديل
+            </a>
+            <a href="/roles/delete/{{ r.role_id }}"
+               onclick="return confirm('هل تريد حذف هذا الدور؟')"
+               class="btn btn-sm btn-outline-danger hover-up">
+              🗑 حذف
+            </a>
+          </td>
+
+        </tr>
+      {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+
+</div>
+
+
+<!-- STYLES -->
+<style>
+/*********** Animations ***********/
+.fade-in-up { animation: fadeInUp 0.5s ease; }
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/*********** Interactive Inputs ***********/
+.input-animate {
+  transition: 0.25s ease;
+}
+.input-animate:focus {
+  transform: scale(1.02);
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 8px rgba(13,110,253,0.3);
+}
+
+/*********** Hover Effects ***********/
+.hover-scale { transition: 0.25s ease; }
+.hover-scale:hover { transform: scale(1.05); }
+
+.hover-up { transition: 0.25s ease; }
+.hover-up:hover { transform: translateY(-4px); }
+
+/*********** Table Hover ***********/
+.table-hover tbody tr:hover {
+  background: rgba(13,110,253,0.08);
+}
+</style>
+
+<!-- LIVE VALIDATION SCRIPT -->
+<script>
+document.getElementById("roleName").addEventListener("input", function() {
+  if (this.value.length < 3) {
+    this.style.borderColor = "red";
+  } else {
+    this.style.borderColor = "#0d6efd";
+  }
+});
+</script>
+
+{% endblock %}

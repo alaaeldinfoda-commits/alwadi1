@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- ===================================== -->
+<!-- 🔔 NOTIFICATIONS BUTTON -->
+<!-- ===================================== -->
+<div id="notif-btn" class="notif-btn shadow">
+    <i class="fa fa-bell"></i>
+    {% if notifications|length > 0 %}
+        <span class="badge bg-danger" id="notif-count">{{ notifications|length }}</span>
+    {% endif %}
+</div>
+
+<!-- ===================================== -->
+<!-- 🔔 NOTIFICATIONS PANEL -->
+<!-- ===================================== -->
+<div id="notif-panel" class="notif-panel">
+
+    <div class="notif-header">
+        <h5 class="mb-0">الإشعارات</h5>
+        <button class="btn-close" id="notif-close"></button>
+    </div>
+
+    <ul class="notif-list" id="notif-list">
+        {% if notifications %}
+            {% for n in notifications %}
+                <li class="notif-item">
+                    {{ n }}
+                </li>
+            {% endfor %}
+        {% else %}
+            <li class="notif-empty">لا توجد إشعارات جديدة</li>
+        {% endif %}
+    </ul>
+
+</div>
+
+<!-- ===================================== -->
+<!-- FLASH TOAST -->
+<!-- ===================================== -->
+
+<div class="toast-container position-fixed bottom-0 start-0 p-3">
+    <div id="flashToast" class="toast text-bg-primary border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body" id="flash-message-body">رسالة النظام</div>
+            <button type="button" class="btn-close btn-close-white me-2" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================================== -->
+<!--  STAT CARDS  -->
+<!-- ===================================== -->
+
+<div class="row g-3">
+
+    <div class="col-md-3">
+        <div class="card-animate text-center p-3">
+            <div class="text-muted mb-1">المواقع</div>
+            <h3>{{ sites_count }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-animate text-center p-3">
+            <div class="text-muted mb-1">المقاولون</div>
+            <h3>{{ contractors_count }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-animate text-center p-3">
+            <div class="text-muted mb-1">التقارير</div>
+            <h3>{{ reports_count }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-animate text-center p-3">
+            <div class="text-muted mb-1">المستخدمون</div>
+            <h3>{{ users_count }}</h3>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===================================== -->
+<!-- LAST REPORTS -->
+<!-- ===================================== -->
+
+<div class="row mt-4">
+    <div class="col-lg-8">
+        <div class="card-animate p-3">
+
+            <h5 class="mb-3"><i class="fa fa-clock-rotate-left ms-2"></i> آخر التقارير</h5>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>العنوان</th>
+                            <th>الموقع</th>
+                            <th>المهندس</th>
+                            <th>التاريخ</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for r in latest_reports %}
+                        <tr>
+                            <td>{{ r.report_id }}</td>
+                            <td>{{ r.title }}</td>
+                            <td>{{ r.site_name }}</td>
+                            <td>{{ r.fullname }}</td>
+                            <td>{{ r.date_created.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <a class="btn btn-sm btn-outline-primary" href="/reports/view/{{ r.report_id }}">
+                                    <i class="fa fa-eye"></i> عرض
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="col-lg-4">
+        <div class="card-animate p-3">
+            <h6><i class="fa fa-bolt ms-2"></i> إجراءات سريعة</h6>
+            <div class="d-grid gap-2 mt-3">
+                <a href="/reports/add" class="btn btn-primary">➕ إنشاء تقرير جديد</a>
+                <a href="/reports/search" class="btn btn-outline-secondary">🔎 بحث متقدم</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- ===================================== -->
+<!-- Notifications CSS -->
+<!-- ===================================== -->
+
+<style>
+.notif-btn {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    background: var(--bs-primary);
+    color: white;
+    padding: 12px 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 999;
+    transition: 0.3s;
+}
+
+.notif-btn:hover {
+    transform: scale(1.1);
+}
+
+/* PANEL */
+.notif-panel {
+    position: fixed;
+    top: 0;
+    left: -350px;
+    width: 300px;
+    height: 100vh;
+    background: var(--bs-body-bg);
+    box-shadow: 2px 0 12px rgba(0,0,0,0.2);
+    border-right: 3px solid var(--bs-primary);
+    transition: 0.35s ease;
+    z-index: 1000;
+    padding: 15px;
+}
+
+.notif-panel.active {
+    left: 0;
+}
+
+.notif-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+}
+
+.notif-list {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.notif-item {
+    background: var(--bs-light);
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    animation: fadeInUp .4s ease;
+}
+
+.notif-empty {
+    text-align: center;
+    color: #888;
+    padding: 40px 0;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+
+<!-- ===================================== -->
+<!-- JS -->
+<!-- ===================================== -->
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* ---------------------- Flash Toast ---------------------- */
+    {% with msgs = get_flashed_messages() %}
+        {% if msgs %}
+            document.getElementById("flash-message-body").innerText = "{{ msgs[0] }}";
+            new bootstrap.Toast(document.getElementById("flashToast")).show();
+        {% endif %}
+    {% endwith %}
+
+    /* ---------------------- Notifications Toggle ---------------------- */
+    const notifBtn = document.getElementById("notif-btn");
+    const notifPanel = document.getElementById("notif-panel");
+    const notifClose = document.getElementById("notif-close");
+
+    notifBtn.addEventListener("click", () => notifPanel.classList.add("active"));
+    notifClose.addEventListener("click", () => notifPanel.classList.remove("active"));
+
+    // Click outside to close
+    document.addEventListener("click", (e) => {
+        if (!notifPanel.contains(e.target) && !notifBtn.contains(e.target)) {
+            notifPanel.classList.remove("active");
+        }
+    });
+});
+</script>
+
+{% endblock %}
